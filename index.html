@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Earth and Space Science Arena I</title>
+
+  <style>
+:root {
+  --bg: #050403;
+  --card: rgba(28, 20, 14, 0.86);
+  --card2: rgba(43, 29, 18, 0.82);
+  --line: rgba(255, 213, 137, 0.18);
+  --text: #fff6e8;
+  --muted: #bba98e;
+  --gold: #f7b84b;
+  --gold2: #ffd98b;
+  --brown: #7a4a24;
+  --red: #ff5a4f;
+  --green: #60f0a8;
+  --blue: #7cc7ff;
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(247, 184, 75, 0.16), transparent 26%),
+    radial-gradient(circle at 85% 10%, rgba(124, 199, 255, 0.13), transparent 24%),
+    radial-gradient(circle at 70% 85%, rgba(122, 74, 36, 0.45), transparent 32%),
+    linear-gradient(145deg, #030201 0%, #090604 42%, #120c08 100%);
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.85) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgba(255, 216, 145, 0.65) 0 1px, transparent 1.5px);
+  background-size: 90px 90px, 140px 140px;
+  background-position: 0 0, 40px 60px;
+  opacity: 0.18;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto -10% -35% -10%;
+  height: 55vh;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, rgba(247, 184, 75, 0.13), transparent 62%),
+    radial-gradient(ellipse at 30% 60%, rgba(122, 74, 36, 0.35), transparent 58%);
+  filter: blur(6px);
+  opacity: 0.85;
+}
+
+.app {
+  width: min(1120px, calc(100% - 28px));
+  margin: 0 auto;
+  padding: 34px 0 52px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero {
+  padding: 26px 0 22px;
+}
+
+.brand-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.brand-pill {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(247, 184, 75, 0.36);
+  background: rgba(247, 184, 75, 0.12);
+  color: var(--gold2);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.brand-pill.ghost {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+}
+
+h1 {
+  font-size: clamp(2.3rem, 7vw, 5.5rem);
+  line-height: 0.92;
+  margin: 0;
+  max-width: 920px;
+  letter-spacing: -0.07em;
+  text-transform: uppercase;
+  text-shadow: 0 0 34px rgba(247, 184, 75, 0.18);
+}
+
+.subtitle {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  max-width: 760px;
+  line-height: 1.65;
+}
+
+.card {
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.065), transparent 35%),
+    var(--card);
+  border-radius: 28px;
+  padding: clamp(20px, 4vw, 34px);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.section-kicker {
+  color: var(--gold);
+  font-size: 0.77rem;
+  font-weight: 1000;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.setup-title-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: start;
+  margin-bottom: 24px;
+}
+
+h2 {
+  margin: 0;
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+  letter-spacing: -0.04em;
+}
+
+.muted {
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 8px 0 0;
+}
+
+.selected-count {
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(124, 199, 255, 0.11);
+  border: 1px solid rgba(124, 199, 255, 0.25);
+  color: var(--blue);
+  font-weight: 900;
+}
+
+/* =========================
+   MODE SELECTION
+   ========================= */
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 20px 0 26px;
+}
+
+.mode-grid.two-mode {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.mode-btn,
+.pill-btn,
+.start-btn,
+.secondary-btn,
+.next-btn,
+.quit-btn {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.mode-btn {
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+  min-height: 96px;
+  border-radius: 24px;
+  padding: 20px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.055), transparent 52%),
+    rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: var(--text);
+  transition:
+    transform 0.15s ease,
+    border 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.mode-grid.two-mode .mode-btn {
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 28px;
+}
+
+.mode-btn::before {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  right: -70px;
+  top: -70px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(247, 184, 75, 0.16), transparent 68%);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.mode-btn strong {
+  position: relative;
+  display: block;
+  font-size: 1.08rem;
+  margin-bottom: 6px;
+  z-index: 1;
+}
+
+.mode-grid.two-mode .mode-btn strong {
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  letter-spacing: -0.04em;
+}
+
+.mode-btn span {
+  position: relative;
+  display: block;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.35;
+  z-index: 1;
+}
+
+.mode-grid.two-mode .mode-btn span {
+  font-size: 1rem;
+  max-width: 440px;
+  line-height: 1.5;
+}
+
+.mode-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(247, 184, 75, 0.32);
+}
+
+.mode-btn.active {
+  background:
+    radial-gradient(circle at top left, rgba(247, 184, 75, 0.30), transparent 60%),
+    radial-gradient(circle at bottom right, rgba(124, 199, 255, 0.08), transparent 48%),
+    rgba(247, 184, 75, 0.09);
+  border-color: rgba(247, 184, 75, 0.52);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 16px 36px rgba(0, 0, 0, 0.20);
+}
+
+.mode-btn.active::after {
+  content: "SELECTED";
+  position: absolute;
+  right: 18px;
+  bottom: 16px;
+  color: #1c1207;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.66rem;
+  font-weight: 1000;
+  letter-spacing: 0.12em;
+}
+
+/* Optional: different flavor for geology card */
+.mode-btn[data-mode="geology"].active {
+  background:
+    radial-gradient(circle at top left, rgba(122, 74, 36, 0.55), transparent 62%),
+    radial-gradient(circle at bottom right, rgba(96, 240, 168, 0.08), transparent 48%),
+    rgba(247, 184, 75, 0.075);
+}
+
+/* =========================
+   SETUP OPTIONS
+   ========================= */
+
+.setup-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.setup-block {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.setup-block h3 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+}
+
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill-btn {
+  padding: 10px 13px;
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  font-weight: 900;
+  transition:
+    transform 0.12s ease,
+    background 0.12s ease,
+    border 0.12s ease;
+}
+
+.pill-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(247, 184, 75, 0.25);
+}
+
+.pill-btn.active {
+  color: #1c1207;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  border-color: transparent;
+}
+
+.start-btn,
+.next-btn {
+  width: 100%;
+  margin-top: 24px;
+  padding: 16px 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #1b1006;
+  font-weight: 1000;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  box-shadow: 0 14px 28px rgba(247, 184, 75, 0.18);
+  transition:
+    transform 0.12s ease,
+    filter 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.start-btn:hover,
+.next-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.03);
+  box-shadow: 0 18px 34px rgba(247, 184, 75, 0.22);
+}
+
+.secondary-btn,
+.quit-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 15px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.055);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-weight: 900;
+}
+
+.quit-btn {
+  color: #ffd0cc;
+  border-color: rgba(255, 90, 79, 0.24);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* =========================
+   GAME SCREEN
+   ========================= */
+
+.hud {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.hud > div {
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.hud-label {
+  display: block;
+  color: var(--muted);
+  font-size: 0.73rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+}
+
+.hud strong {
+  font-size: 1.02rem;
+}
+
+.question-shell {
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at top right, rgba(124, 199, 255, 0.10), transparent 45%),
+    var(--card2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: clamp(18px, 4vw, 28px);
+}
+
+.question-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  color: var(--gold);
+  font-weight: 1000;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+}
+
+#chanceText.warning {
+  color: var(--red);
+}
+
+#questionText {
+  font-size: clamp(1.35rem, 3vw, 2.15rem);
+  line-height: 1.25;
+  margin-bottom: 22px;
+}
+
+.choices-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.choice-btn {
+  min-height: 82px;
+  text-align: left;
+  border-radius: 20px;
+  padding: 16px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.095);
+  cursor: pointer;
+  font: inherit;
+  line-height: 1.35;
+  transition:
+    transform 0.12s ease,
+    border 0.12s ease,
+    background 0.12s ease;
+}
+
+.choice-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: rgba(247, 184, 75, 0.38);
+}
+
+.choice-btn b {
+  color: var(--gold2);
+  margin-right: 6px;
+}
+
+.choice-btn.correct {
+  background: rgba(96, 240, 168, 0.12);
+  border-color: rgba(96, 240, 168, 0.55);
+}
+
+.choice-btn.wrong {
+  background: rgba(255, 90, 79, 0.12);
+  border-color: rgba(255, 90, 79, 0.55);
+}
+
+.choice-btn:disabled {
+  cursor: default;
+}
+
+/* =========================
+   FEEDBACK
+   ========================= */
+
+.feedback {
+  margin-top: 16px;
+  border-radius: 22px;
+  padding: 18px;
+  border: 1px solid rgba(96, 240, 168, 0.25);
+  background: rgba(96, 240, 168, 0.08);
+}
+
+.feedback.bad {
+  border-color: rgba(255, 90, 79, 0.28);
+  background: rgba(255, 90, 79, 0.08);
+}
+
+.feedback.warn {
+  border-color: rgba(247, 184, 75, 0.32);
+  background: rgba(247, 184, 75, 0.08);
+}
+
+.feedback-title {
+  font-size: 1.2rem;
+  font-weight: 1000;
+  margin-bottom: 8px;
+}
+
+.feedback p {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.feedback .next-btn {
+  margin-top: 16px;
+}
+
+/* =========================
+   END SCREEN
+   ========================= */
+
+.end-card {
+  text-align: left;
+}
+
+.result-orbit {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 22px 0;
+}
+
+.result-orbit div {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.16);
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.result-orbit span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+}
+
+.result-orbit strong {
+  font-size: 1.6rem;
+  color: var(--gold2);
+}
+
+.end-line {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 1.05rem;
+}
+
+.end-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.end-actions .start-btn,
+.end-actions .secondary-btn {
+  margin-top: 12px;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 760px) {
+  .app {
+    width: min(100% - 20px, 1120px);
+    padding-top: 22px;
+  }
+
+  .setup-title-row,
+  .question-topline {
+    flex-direction: column;
+  }
+
+  .selected-count {
+    width: fit-content;
+  }
+
+  .mode-grid,
+  .mode-grid.two-mode,
+  .setup-options,
+  .choices-grid,
+  .hud,
+  .result-orbit,
+  .end-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .mode-btn,
+  .mode-grid.two-mode .mode-btn {
+    min-height: auto;
+  }
+
+  .mode-grid.two-mode .mode-btn {
+    padding: 22px;
+  }
+
+  .mode-btn.active::after {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: fit-content;
+    margin-top: 14px;
+  }
+
+  .choice-btn {
+    min-height: 74px;
+  }
+}
+
+@media (max-width: 460px) {
+  .card {
+    border-radius: 22px;
+  }
+
+  .mode-btn,
+  .setup-block,
+  .question-shell,
+  .feedback,
+  .result-orbit div {
+    border-radius: 18px;
+  }
+
+  .brand-pill {
+    font-size: 0.68rem;
+  }
+
+  .pill-btn {
+    padding: 9px 11px;
+  }
+}
+
+.timer-subpanel {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.mini-label {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 1000;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 10px;
+}
+
+.time-setter {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.time-setter label {
+  display: grid;
+  gap: 7px;
+}
+
+.time-setter span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.time-setter input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background: rgba(255, 255, 255, 0.055);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 12px 13px;
+  font: inherit;
+  font-weight: 900;
+  outline: none;
+}
+
+.time-setter input:focus {
+  border-color: rgba(247, 184, 75, 0.5);
+  box-shadow: 0 0 0 3px rgba(247, 184, 75, 0.10);
+}
+
+.timer-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 460px) {
+  .time-setter {
+    grid-template-columns: 1fr;
+  }
+}
+
+    :root {
+      --bg: #050403;
+      --card: rgba(28, 20, 14, 0.86);
+      --card2: rgba(43, 29, 18, 0.82);
+      --line: rgba(255, 213, 137, 0.18);
+      --text: #fff6e8;
+      --muted: #bba98e;
+      --gold: #f7b84b;
+      --gold2: #ffd98b;
+      --brown: #7a4a24;
+      --red: #ff5a4f;
+      --green: #60f0a8;
+      --blue: #7cc7ff;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Paste the rest of your CSS below this line */
+  </style>
+</head>
+
+<body>
+  <!-- =========================================================
+       PASTE YOUR FULL HTML BODY HERE
+       Do not include another <html>, <head>, or <body>.
+       Start from <div class="app">
+       ========================================================= -->
+
+  <div class="app">
+    <header class="hero">
+      <div class="brand-row">
+        <span class="brand-pill">HULAGPOS EARTH & SPACE</span>
+        <span class="brand-pill ghost">COSMIC QUIZ ARENA I</span>
+      </div>
+
+      <h1>Earth and Space Science Arena I</h1>
+      <p class="subtitle">
+        Space Science and Geology drill for astronomy, cosmology, Earth layers, earthquakes,
+        plate tectonics, volcanoes, rocks, minerals, and soil.
+      </p>
+    </header>
+
+    <main>
+  <div class="app">
+  <header class="hero">
+    <div class="brand-row">
+      <span class="brand-pill">HULAGPOS EARTH & SPACE</span>
+      <span class="brand-pill ghost">UPCAT-AUDD</span>
+    </div>
+
+    <h1>Earth and Space Science Arena I</h1>
+    <p class="subtitle">
+      Space Science and Geology drill for astronomy, cosmology, Earth layers, earthquakes,
+      plate tectonics, volcanoes, rocks, minerals, and soil.
+    </p>
+  </header>
+
+  <main>
+    <!-- SETUP SCREEN -->
+    <section class="card setup-card" id="setupScreen">
+      <div class="section-kicker">MISSION SETUP</div>
+
+      <div class="setup-title-row">
+        <div>
+          <h2>Pumili ng Mission</h2>
+          <p class="muted">
+            Choose Space Science, Geology, or both. Questions will rotate from your selected coverage.
+          </p>
+        </div>
+        <div class="selected-count" id="selectedCount">0 selected</div>
+      </div>
+
+      <div class="mode-grid two-mode" id="modeGrid">
+        <button class="mode-btn active" data-mode="space" type="button">
+          <strong>Space Science</strong>
+          <span>Big Bang, redshift, CMBR, stars, planets, moons, cosmology, and small bodies.</span>
+        </button>
+
+        <button class="mode-btn active" data-mode="geology" type="button">
+          <strong>Geology</strong>
+          <span>Earth layers, earthquakes, plate tectonics, volcanoes, rocks, minerals, and soil.</span>
+        </button>
+      </div>
+
+      <div class="setup-options">
+        <div class="setup-block">
+          <h3>Question Count</h3>
+          <div class="pill-row" id="countOptions">
+            <button class="pill-btn active" data-count="10" type="button">10</button>
+            <button class="pill-btn" data-count="25" type="button">25</button>
+            <button class="pill-btn" data-count="50" type="button">50</button>
+            <button class="pill-btn" data-count="100" type="button">100</button>
+            <button class="pill-btn" data-count="unli" type="button">Unli</button>
+          </div>
+        </div>
+
+        <div class="setup-block">
+          <h3>Timer Mode</h3>
+
+          <div class="pill-row" id="timerOptions">
+            <button class="pill-btn active" data-timer-mode="untimed" type="button">Untimed</button>
+            <button class="pill-btn" data-timer-mode="timed" type="button">Timed</button>
+          </div>
+
+          <div class="timer-subpanel hidden" id="timedPanel">
+            <div class="mini-label">Timed Type</div>
+
+            <div class="pill-row" id="timedTypeOptions">
+              <button class="pill-btn active" data-timed-type="general" type="button">
+                General Timer
+              </button>
+              <button class="pill-btn" data-timed-type="perQuestion" type="button">
+                Per Question
+              </button>
+            </div>
+
+            <div class="time-setter" id="timeSetter">
+              <label>
+                <span>Minutes</span>
+                <input id="timerMinutes" type="number" min="0" max="180" value="10">
+              </label>
+
+              <label>
+                <span>Seconds</span>
+                <input id="timerSecondsInput" type="number" min="0" max="59" value="0">
+              </label>
+            </div>
+          </div>
+
+          <p class="timer-note" id="timerNote">No time limit.</p>
+        </div>
+      </div>
+
+      <button class="start-btn" id="startBtn" type="button">
+        Launch Mission
+      </button>
+    </section>
+
+    <!-- GAME SCREEN -->
+    <section class="card game-card hidden" id="gameScreen">
+      <div class="hud">
+        <div>
+          <span class="hud-label">Mission</span>
+          <strong id="hudTopic">Earth & Space Mixed Drill</strong>
+        </div>
+
+        <div>
+          <span class="hud-label">Question</span>
+          <strong id="hudProgress">1 / 10</strong>
+        </div>
+
+        <div>
+          <span class="hud-label">Score</span>
+          <strong id="hudScore">0</strong>
+        </div>
+
+        <div>
+          <span class="hud-label">Timer</span>
+          <strong id="hudTimer">∞</strong>
+        </div>
+      </div>
+
+      <div class="question-shell">
+        <div class="question-topline">
+          <span id="questionCategory">Space Science</span>
+          <span id="chanceText">First attempt</span>
+        </div>
+
+        <h2 id="questionText">Question appears here.</h2>
+
+        <div class="choices-grid" id="choicesGrid"></div>
+      </div>
+
+      <div class="feedback hidden" id="feedbackBox">
+        <div class="feedback-title" id="feedbackTitle">Correct!</div>
+        <p id="feedbackText">Explanation appears here.</p>
+
+        <button class="next-btn" id="nextBtn" type="button">
+          Next Question
+        </button>
+      </div>
+
+      <button class="quit-btn" id="quitBtn" type="button">
+        End Mission
+      </button>
+    </section>
+
+    <!-- END SCREEN -->
+    <section class="card end-card hidden" id="endScreen">
+      <div class="section-kicker">MISSION REPORT</div>
+      <h2 id="endTitle">Mission Complete</h2>
+
+      <div class="result-orbit">
+        <div>
+          <span>Score</span>
+          <strong id="finalScore">0 / 10</strong>
+        </div>
+        <div>
+          <span>Accuracy</span>
+          <strong id="finalAccuracy">0%</strong>
+        </div>
+        <div>
+          <span>Best Streak</span>
+          <strong id="finalStreak">0</strong>
+        </div>
+      </div>
+
+      <p class="end-line" id="endLine">
+        Mission status loading...
+      </p>
+
+      <div class="end-actions">
+        <button class="start-btn" id="restartBtn" type="button">Play Again</button>
+        <button class="secondary-btn" id="setupBtn" type="button">Back to Cabin</button>
+      </div>
+    </section>
+  </main>
+</div>
+    </main>
+  </div>
+
+  <script>
+const rawQuestions = `
+bigbang|Which statement best describes the Big Bang Theory?|The universe began when planets collided with one another.|The universe expanded from an extremely hot, dense, and small state.|The universe was created when the Sun exploded.|The universe has always remained the same size.|B|The Big Bang Theory explains that the universe expanded from an extremely hot, dense, and small early state.
+bigbang|According to the Big Bang Theory, what happened to the universe over time?|It became smaller and hotter.|It stopped expanding after stars formed.|It expanded, cooled, and became less dense.|It immediately formed Earth and the Moon.|C|As space expanded, the universe cooled and became less dense.
+bigbang|The Big Bang Theory mainly explains the origin and development of the:|Earth|Moon|solar system only|universe|D|The Big Bang Theory explains the origin and development of the universe.
+bigbang|Which is one major evidence supporting the Big Bang Theory?|Cosmic microwave background radiation|Earthquake waves|volcanic eruptions|ocean currents|A|CMBR is leftover radiation from the early hot universe.
+bigbang|The early universe was extremely:|cold and empty|dry and solid|hot and dense|slow and frozen|C|The early universe was extremely hot and dense.
+bigbang|The approximate age of the universe is:|4.6 million years|13.8 billion years|100 million years|1 trillion years|B|The universe is approximately 13.8 billion years old.
+bigbang|The idea that the universe is expanding is strongly supported by observations of:|redshift in distant galaxies|fossils in rocks|ocean waves|lunar craters|A|Redshift in distant galaxies shows that galaxies are generally moving away.
+bigbang|Georges Lemaître is associated with the idea of the:|geocentric universe|laws of motion|continental drift|primeval atom or early expanding universe|D|Lemaître proposed the primeval atom idea, an early version of Big Bang cosmology.
+bigbang|The Big Bang should be understood as:|an explosion of planets from Earth|the expansion of space itself|the birth of only the Milky Way|the creation of the Moon|B|The Big Bang is the expansion of space itself, not an explosion into pre-existing space.
+bigbang|Why did the universe cool after the Big Bang?|Stars absorbed all heat.|Earth blocked cosmic radiation.|Space expanded, spreading energy over a larger volume.|The Sun became colder.|C|Expansion spread energy over a larger volume, causing cooling.
+
+redshift|Cosmological redshift means that light from distant galaxies shifts toward the:|blue end of the spectrum|green region only|ultraviolet region|red end of the spectrum|D|Redshift means light shifts toward longer, redder wavelengths.
+redshift|When a light source moves away from an observer, its wavelength becomes:|longer|shorter|zero|unchanged|A|When a source moves away, its light waves stretch and become longer.
+redshift|Red light has relatively:|shorter wavelength and higher frequency|no wavelength|longer wavelength and lower frequency|higher energy than gamma rays|C|Red light has longer wavelength and lower frequency than blue light.
+redshift|Which everyday phenomenon is commonly used as an analogy for redshift?|reflection|Doppler effect|refraction only|evaporation|B|Redshift is commonly explained using the Doppler effect.
+redshift|In astronomy, absorption lines are useful because they reveal an object’s:|exact age only|speed of rotation only|number of moons|chemical composition|D|Absorption lines act like chemical fingerprints.
+redshift|Edwin Hubble observed that many distant galaxies are:|moving away from us|orbiting Earth|made only of ice|not emitting light|A|Hubble observed that many distant galaxies are moving away.
+redshift|Hubble’s Law states that the farther a galaxy is, the:|slower it moves away|faster it moves away|smaller it becomes physically|colder it becomes automatically|B|The farther a galaxy is, the faster it generally recedes.
+redshift|Hubble’s Law supports which conclusion?|Earth is the center of the universe.|The Moon produces its own light.|The solar system is shrinking.|The universe is expanding.|D|Hubble’s Law supports an expanding universe.
+redshift|In Hubble’s Law, distance and recession velocity are:|inversely proportional|unrelated|directly proportional|always equal to zero|C|Distance and recession velocity are directly proportional.
+redshift|If Galaxy X is farther away than Galaxy Y, Hubble’s Law predicts that Galaxy X generally:|moves away faster|moves away slower|does not move|becomes a planet|A|A farther galaxy generally has a greater recession velocity.
+
+cmbr|CMBR stands for:|Cosmic Magnetic Background Reaction|Central Microwave Body Radiation|Cosmic Microwave Background Radiation|Cosmic Molecular Brightness Region|C|CMBR means Cosmic Microwave Background Radiation.
+cmbr|The CMBR is best described as:|sunlight reflected by planets|heat from Earth’s mantle|radiation from modern satellites|leftover heat radiation from the early universe|D|CMBR is leftover heat radiation from the early universe.
+cmbr|The CMBR supports the Big Bang because it is evidence that the early universe was once:|hot and dense|solid and rocky|filled with oceans|centered on Earth|A|CMBR indicates a hot, dense early universe.
+cmbr|The CMBR was discovered accidentally by:|Copernicus and Kepler|Arno Penzias and Robert Wilson|Galileo and Newton|Hubble and Lemaître|B|Penzias and Wilson accidentally discovered the CMBR.
+cmbr|Penzias and Wilson first detected the CMBR as:|visible red light|solar wind|oceanic vibration|unwanted noise in an antenna|D|They detected it as unwanted antenna noise.
+cmbr|The present temperature of the CMBR is about:|273 K|100 K|2.725 K|10,000 K|C|The CMBR is about 2.725 K today.
+cmbr|The CMBR is very cold today because the universe has:|expanded and cooled|stopped moving|become smaller|turned into plasma|A|The universe expanded and cooled over time.
+cmbr|Which scientists predicted the CMBR before its accidental discovery?|Aristotle and Ptolemy|Alpher, Herman, and Gamow|Darwin and Wallace|Wegener and Hess|B|Alpher, Herman, and Gamow predicted early-universe background radiation.
+cmbr|The CMBR is often compared to wet roads after rain because both are:|direct causes of an event|forms of visible light|evidence of a past event|impossible to measure|C|Both are evidence that something happened earlier.
+cmbr|Which pair gives strong evidence for the Big Bang Theory?|tides and eclipses|volcanoes and earthquakes|seasons and moon phases|redshift and CMBR|D|Redshift shows expansion, while CMBR shows leftover early-universe radiation.
+
+objects|Which category includes main sequence stars, active stars, and stellar remnants?|Stars and stellar remnants|Planetary objects|Small solar system bodies|Natural satellites only|A|These belong to stars and stellar remnants.
+objects|Which of the following is a planetary object?|comet|meteor|nebula|major planet|D|A major planet is a planetary object.
+objects|Which category includes comets, asteroids, meteoroids, meteors, fireballs, and meteorites?|large cosmic structures|small solar system bodies|stars and remnants|interstellar matter|B|These are small solar system bodies.
+objects|Which is an example of a natural satellite?|Mercury|Venus|Earth’s Moon|Ceres|C|Earth’s Moon is a natural satellite.
+objects|Which category includes galaxies and galaxy clusters?|large cosmic structures|dwarf planets|moons|meteors|A|Galaxies and galaxy clusters are large cosmic structures.
+objects|Diffuse and interstellar matter mainly refers to:|only planets|only asteroids|gas and dust between stars|only black holes|C|Interstellar matter is gas and dust between stars.
+objects|A black hole may be classified as a stellar remnant because it can form from the collapse of a:|comet|moon|planet|massive star|D|A massive star can collapse into a black hole.
+objects|Why do astronomers classify celestial objects?|To prove that all objects are identical.|To organize objects based on shared properties.|To remove the need for telescopes.|To make stars easier to name randomly.|B|Classification organizes objects based on shared properties.
+objects|A galaxy is best described as:|a large system of stars, gas, dust, and dark matter held by gravity|a small rock burning in Earth’s atmosphere|a moon orbiting Jupiter|a dwarf planet beyond Neptune|A|A galaxy is a gravitational system of stars, gas, dust, and dark matter.
+objects|Which object is outside the solar system?|Mars|Jupiter|Pluto|Andromeda Galaxy|D|The Andromeda Galaxy is outside the solar system.
+
+stars|The Morgan-Keenan System is used to classify:|planets|stars|comets|moons|B|The Morgan-Keenan System classifies stars.
+stars|The common stellar spectral sequence is:|A B C D E F G|M K G F A B O|O B A F G K M|X Y Z O B A|C|The standard stellar spectral sequence is O B A F G K M.
+stars|Which spectral class contains the hottest stars?|O|G|K|M|A|O-type stars are the hottest.
+stars|Which spectral class contains the coolest stars among the standard sequence?|O|B|A|M|D|M-type stars are the coolest in the standard sequence.
+stars|The Sun is approximately a:|neutron star|G-type main sequence star|red supergiant|black hole|B|The Sun is a G-type main sequence star.
+stars|An average star may evolve into a red giant and eventually become a:|white dwarf|massive black hole immediately|comet|meteorite|A|Average stars may end as white dwarfs.
+stars|A massive star may end its life as a neutron star or:|moon|dwarf planet|black hole|asteroid|C|Massive stars may become neutron stars or black holes.
+stars|A supernova is most associated with the death of a:|small comet|moon|dwarf planet|massive star|D|A supernova is associated with the death of a massive star.
+stars|A stellar nebula is important because it can be a birthplace of:|oceans|stars|mountains|earthquakes|B|Nebulae can be star-forming regions.
+stars|A white dwarf is best described as:|a planet with white clouds|a young comet|the dense leftover core of a low- or medium-mass star|a galaxy cluster|C|A white dwarf is the dense leftover core of a low- or medium-mass star.
+
+history|The geocentric model places which object at the center?|Sun|Jupiter|Moon|Earth|D|The geocentric model places Earth at the center.
+history|The heliocentric model places which object near the center of the solar system?|Sun|Earth|Moon|Saturn|A|The heliocentric model places the Sun near the center.
+history|Claudius Ptolemy is strongly associated with the:|heliocentric model|Big Bang Theory|geocentric model|nebular hypothesis|C|Ptolemy is associated with the geocentric model.
+history|Nicolaus Copernicus is strongly associated with the:|geocentric model|heliocentric model|steady-state theory|CMBR discovery|B|Copernicus is associated with the heliocentric model.
+history|Galileo’s observations supported heliocentrism partly because he observed:|Jupiter’s moons and the phases of Venus|CMBR noise|Earth’s outer core|ocean tides|A|Jupiter’s moons and Venus’s phases supported heliocentrism.
+history|Johannes Kepler is famous for his laws of:|stellar explosions|comet formation|galaxy classification|planetary motion|D|Kepler is famous for his laws of planetary motion.
+history|Kepler’s First Law states that planets move in:|perfect circles|ellipses with the Sun at one focus|straight lines|random paths|B|Planets move in ellipses with the Sun at one focus.
+history|Isaac Newton explained planetary motion using laws of motion and:|magnetism only|electricity only|universal gravitation|ocean tides|C|Newton used universal gravitation to explain planetary motion.
+history|The nebular hypothesis explains the formation of the:|solar system from a rotating cloud of gas and dust|universe from CMBR|Moon from Earth’s tides only|galaxies from earthquakes|A|The nebular hypothesis explains solar system formation from gas and dust.
+history|The nebular hypothesis is commonly associated with:|Penzias and Wilson|Morgan and Keenan|Hubble and Humason|Kant and Laplace|D|Kant and Laplace are associated with the nebular hypothesis.
+
+cosmology|The steady-state theory claimed that the universe:|began from a singular hot dense state|is centered on Earth|has no beginning and maintains constant density through continuous matter creation|contains no galaxies|C|Steady-state theory claimed constant density through continuous matter creation.
+cosmology|Which evidence weakened the steady-state theory?|moon phases|discovery of the CMBR|solar eclipses|Earth’s magnetic field|B|The discovery of CMBR weakened the steady-state theory.
+cosmology|Inflation theory proposes that the early universe experienced:|slow cooling only|contraction into Earth|formation of oceans|extremely rapid expansion|D|Inflation proposes extremely rapid early expansion.
+cosmology|Alan Guth is strongly associated with:|cosmic inflation theory|geocentric astronomy|discovery of Jupiter’s moons|the classification of moons|A|Alan Guth is associated with cosmic inflation theory.
+cosmology|Dark matter is proposed because:|planets are made of invisible rock|galaxies rotate as if they contain more mass than we can see|the Moon changes phases|stars do not emit light|B|Galaxy rotation suggests more mass than visible matter can explain.
+cosmology|Dark energy is used to explain the universe’s:|ocean tides|moon craters|accelerated expansion|meteor showers|C|Dark energy explains the accelerated expansion of the universe.
+cosmology|The term “cosmology” refers to the study of the:|origin, structure, and evolution of the universe|weather of Earth only|rocks and minerals only|oceans and tides only|A|Cosmology studies the origin, structure, and evolution of the universe.
+cosmology|Astronomy is the study of:|earthquakes|atmospheric storms|fossils|celestial objects and phenomena beyond Earth|D|Astronomy studies celestial objects and phenomena beyond Earth.
+cosmology|The Milky Way is a:|planet|comet|galaxy|moon|C|The Milky Way is a galaxy.
+cosmology|The solar system is part of the:|Andromeda Galaxy|Milky Way Galaxy|Virgo Supercluster only|Large Magellanic Cloud|B|The solar system is part of the Milky Way Galaxy.
+
+planets|Which is a major planet?|Pluto|Ceres|Eris|Jupiter|D|Jupiter is a major planet.
+planets|Which planet is closest to the Sun?|Mercury|Venus|Earth|Mars|A|Mercury is the closest planet to the Sun.
+planets|Which planet is known for its prominent ring system?|Mars|Saturn|Mercury|Venus|B|Saturn is famous for its prominent ring system.
+planets|Which is classified as a dwarf planet?|Earth|Neptune|Pluto|Jupiter|C|Pluto is classified as a dwarf planet.
+planets|Which dwarf planet is located in the asteroid belt?|Pluto|Eris|Makemake|Ceres|D|Ceres is located in the asteroid belt.
+planets|Pluto was reclassified because it has not:|cleared its orbital neighborhood|orbited the Sun|become round|reflected sunlight|A|Pluto has not cleared its orbital neighborhood.
+planets|A natural satellite is an object that naturally orbits a:|star only|galaxy only|planet or dwarf planet|meteor|C|A natural satellite orbits a planet or dwarf planet.
+planets|Which is a moon of Jupiter?|Titan|Ganymede|Triton|Phobos|B|Ganymede is a moon of Jupiter.
+planets|Which is a moon of Saturn?|Europa|Callisto|Deimos|Titan|D|Titan is a moon of Saturn.
+planets|The Moon is Earth’s:|natural satellite|dwarf planet|star|asteroid|A|The Moon is Earth’s natural satellite.
+
+smallbodies|A comet is mostly made of:|pure iron|plasma|ice, dust, and rocky material|liquid lava|C|Comets are made mostly of ice, dust, and rocky material.
+smallbodies|A comet’s tail usually becomes more visible when it gets closer to the:|Earth’s core|asteroid belt|Moon|Sun|D|A comet’s tail becomes more visible near the Sun.
+smallbodies|An asteroid is generally a:|cloud of CMBR|rocky or metallic body orbiting the Sun|type of star|moon of Earth|B|An asteroid is a rocky or metallic body orbiting the Sun.
+smallbodies|Most asteroids are found between:|Mars and Jupiter|Earth and Mars|Mercury and Venus|Uranus and Neptune|A|Most asteroids are found in the asteroid belt between Mars and Jupiter.
+smallbodies|A meteoroid is:|a planet with rings|a star remnant|a comet tail|a small rocky or metallic body in space|D|A meteoroid is a small rocky or metallic body in space.
+smallbodies|A meteor is:|a rock on the ground|a moon of Mars|a streak of light from a meteoroid burning in the atmosphere|a planet beyond Neptune|C|A meteor is the bright streak caused by a meteoroid burning in the atmosphere.
+smallbodies|A meteorite is:|a meteoroid fragment that reaches the ground|a comet orbiting the Sun|a dwarf planet|a galaxy|A|A meteorite is a meteoroid fragment that reaches the ground.
+smallbodies|A fireball is usually a very bright:|planet|meteor|moon|galaxy|B|A fireball is a very bright meteor.
+smallbodies|Which sequence is correct?|meteorite in space → meteor in air → meteoroid on ground|meteor in space → meteorite in air → meteoroid on ground|meteoroid in space → meteor in atmosphere → meteorite on ground|asteroid → star → planet|C|The correct sequence is meteoroid in space, meteor in the atmosphere, meteorite on the ground.
+smallbodies|Which object commonly develops a coma and tail?|asteroid|comet|meteorite|moon|B|Comets commonly develop a coma and tail near the Sun.
+
+application|A scientist observes that a galaxy’s absorption lines are shifted toward longer wavelengths. What does this suggest?|The galaxy is becoming a planet.|The galaxy is moving away.|The galaxy is inside Earth’s atmosphere.|The galaxy is producing moonlight.|B|Longer wavelengths indicate redshift, which suggests the galaxy is moving away.
+application|If two galaxies are both redshifted but one is more strongly redshifted, that galaxy is likely:|moving away faster|closer and motionless|a moon|not part of the universe|A|A stronger redshift usually indicates faster recession.
+application|Why do redshift and CMBR work well together as evidence for the Big Bang?|Redshift proves Earth is flat and CMBR proves tides.|Both explain only the Moon.|They are unrelated to cosmology.|Redshift shows expansion, while CMBR shows leftover early-universe radiation.|D|Redshift shows expansion, while CMBR shows leftover radiation from the early universe.
+application|A student says, “The Big Bang was an explosion from one point into empty space.” What correction is best?|It was only a solar explosion.|It happened inside Earth.|It was the expansion of space itself, not an explosion into pre-existing space.|It formed only asteroids.|C|The Big Bang was the expansion of space itself, not an explosion into empty space.
+application|Which observation best supports the idea that stars have different temperatures?|All stars look the same color.|Stars have different spectral classes and colors.|All stars are moons.|Stars do not emit radiation.|B|Different spectral classes and colors show different stellar temperatures.
+application|Why is the Sun considered a star?|It produces energy through nuclear fusion.|It orbits Earth every day.|It is made of solid rock.|It has a tail like a comet.|A|The Sun is a star because it produces energy through nuclear fusion.
+application|Why are moons not considered stars?|They are larger than galaxies.|They produce CMBR.|They create nuclear fusion.|They do not produce their own light by nuclear fusion.|D|Moons do not produce their own light through nuclear fusion.
+application|Why are comets often called “dirty snowballs”?|They are made only of metal.|They are pieces of Earth’s crust.|They contain ice mixed with dust and rock.|They are stars covered by dust.|C|Comets contain ice mixed with dust and rock.
+application|A bright streak appears in the sky, then a small rock is later found on the ground. What are these called, respectively?|meteor and meteorite|comet and asteroid|planet and moon|galaxy and star|A|The streak is a meteor, while the rock that reaches the ground is a meteorite.
+application|Which statement best summarizes pages 1–29 of the deck?|Astronomy studies only Earth’s weather.|The universe is expanding, celestial objects are classified by properties, and the solar system contains planets, moons, and small bodies.|The Moon produces its own light and creates the Sun.|All objects in space are planets.|B|The coverage includes the expanding universe, celestial object classification, and solar system bodies.
+
+geology|What is geology mainly concerned with?|weather patterns only|living organisms only|Earth materials, structures, processes, and history|stars and galaxies only|C|Geology studies Earth materials, structures, processes, and history.
+geology|Which layer is Earth's outermost solid layer?|outer core|inner core|crust|mantle|C|The crust is the outermost solid layer.
+geology|The mantle is mainly composed of what greenish rock?|granite|limestone|peridotite|basalt|C|The deck notes that the mantle is not yellow; it is mainly peridotite.
+geology|Which Earth layer is liquid?|lithosphere|inner core|continental crust|outer core|D|The outer core is liquid.
+geology|Which layer remains solid despite very high temperature?|outer core|oceanic crust|inner core|asthenosphere|C|The inner core is solid because of intense pressure.
+geology|Why can the inner core stay solid?|contact with the atmosphere|low temperature|extreme pressure|abundant water|C|Extreme pressure keeps the inner core solid.
+geology|Which layer includes the crust and uppermost solid mantle?|lithosphere|outer core|mesosphere|asthenosphere|A|The lithosphere includes the crust and uppermost solid mantle.
+geology|Why is the asthenosphere important to plate motion?|it is completely rigid|it is weak, ductile, and viscous|it is liquid metal|it is above the atmosphere|B|Its weak ductile behavior allows plates to move above it.
+geology|Why can't humans directly dig to the mantle?|the mantle is made of air|deepest boreholes are far too shallow|the crust has no thickness|the mantle is above the crust|B|Drilling has reached only a tiny fraction of Earth's depth.
+geology|What does the Kola Superdeep Borehole show?|Earth has no mantle|humans reached the inner core|earthquakes reveal nothing|direct drilling is very limited|D|It shows how shallow human drilling is compared with Earth's radius.
+geology|What event releases seismic waves?|earthquake|rainfall|photosynthesis|eclipse|A|Earthquakes release seismic waves.
+geology|Why are seismic waves useful for studying Earth's interior?|they stop at the crust|they only travel in air|they change behavior in different materials|they are made by clouds|C|Wave behavior changes with material properties.
+geology|Which seismic wave is compressional?|P-wave|S-wave|Rayleigh wave|Love wave|A|P-waves are compressional primary waves.
+geology|Which seismic wave is a shear wave?|sound wave|P-wave|S-wave|light wave|C|S-waves are shear waves.
+geology|Which seismic waves arrive first?|Rayleigh waves|P-waves|Love waves|S-waves|B|P-waves are fastest.
+geology|Which waves usually arrive after P-waves?|radio waves|S-waves|ocean waves|light waves|B|S-waves are slower than P-waves.
+geology|Which seismic wave cannot pass through liquids?|P-wave|sound wave|Rayleigh wave|S-wave|D|S-waves cannot travel through liquids.
+geology|S-wave shadow zones helped prove the outer core is what?|liquid|solid|granite|gaseous|A|S-waves do not pass through the liquid outer core.
+geology|P-wave refraction helps identify what?|plant growth rate|ocean salinity|cloud height|boundaries between Earth layers|D|P-waves bend at boundaries between materials.
+geology|P-wave refraction is like what everyday observation?|a pencil appearing bent in water|a bird flying|a plant growing|a sunset shadow|A|A pencil in water appears bent because of refraction.
+geology|Which waves generally shake more strongly than P-waves?|S-waves|infrared waves|radio waves|light waves|A|S-waves usually produce stronger ground shaking.
+geology|Which are body waves?|light and radio waves|P-waves and S-waves|tides and currents|Love and Rayleigh waves|B|P and S waves travel through Earth's interior.
+geology|Which are surface waves?|P and S waves|sound and light|compression and shear only|Love and Rayleigh waves|D|Love and Rayleigh waves move along the surface.
+geology|What is the earthquake focus?|intensity scale|place where waves stop|point inside Earth where rupture starts|surface point above the earthquake|C|The focus is the subsurface origin.
+geology|What is the epicenter?|deepest mantle point|oldest rock layer|surface point directly above the focus|point where rupture starts underground|C|The epicenter lies above the focus.
+geology|What is a fault?|sedimentary layer only|volcanic gas|type of mineral|fracture where rocks move|D|A fault is a crack or fracture with movement.
+geology|What is a fault scarp?|surface offset caused by fault movement|mineral streak|crater lake|kind of fossil|A|Fault displacement may produce a scarp.
+geology|Magnitude measures what?|damage in one town only|energy released by an earthquake|soil depth|number of buildings only|B|Magnitude measures source energy.
+geology|Intensity measures what?|total energy only|felt shaking and observed effects|rock age|magma volume|B|Intensity measures effects at a location.
+geology|What instrument records seismic waves?|seismograph|hygrometer|thermometer|barometer|A|A seismograph records earthquake waves.
+geology|Why can a lower-magnitude quake be more damaging locally?|higher magnitude never damages|damage depends only on magnitude|quakes do not affect structures|intensity depends on depth, distance, ground, and buildings|D|Local conditions control intensity and damage.
+geology|Where is intensity generally highest?|near the epicenter|near the equator only|at ocean surface only|in the atmosphere|A|Intensity is usually higher close to the epicenter.
+geology|Which comparison is correct?|intensity is always the same|magnitude varies by city|both are identical|magnitude is energy; intensity is local effects|D|Magnitude and intensity measure different things.
+geology|Triangulation is used to locate an earthquake's what?|mineral composition|lava color|cloud path|epicenter|D|Triangulation estimates epicenter location.
+geology|How many seismic stations are commonly needed for triangulation?|three|one|two|ten|A|Three stations allow the distance circles to intersect.
+geology|In d = Δt/8 sec × 100 km, what is Δt?|mantle depth|P-wave and S-wave arrival-time difference|magnitude|number of stations|B|Delta t is the P-S arrival time gap.
+geology|If Δt = 8 seconds, the distance is about what?|100 km|800 km|200 km|50 km|A|8/8 × 100 km = 100 km.
+geology|If Δt = 24 seconds, the distance is about what?|200 km|300 km|400 km|100 km|B|24/8 × 100 km = 300 km.
+geology|A larger P-S time gap means the station is probably what?|exactly at the focus|farther from the epicenter|closer to the epicenter|not detecting waves|B|A larger gap means a longer travel distance.
+geology|In triangulation, circles around stations show what?|estimated epicentral distance|mineral hardness|plate thickness|volcano height|A|The radius is the station-to-epicenter distance.
+geology|What is the main idea of plate tectonics?|clouds cause earthquakes|Earth's crust is motionless|outer core directly makes mountains|Earth's lithosphere is broken into moving plates|D|Plate tectonics explains moving lithospheric plates.
+geology|Tectonic plates move over what layer?|atmosphere|asthenosphere|hydrosphere only|inner core|B|The asthenosphere is beneath the lithosphere.
+geology|Which asthenosphere property allows plate movement?|perfectly rigid|solid diamond|cold and brittle|viscous, ductile, and mechanically weak|D|Weak ductile material allows plate motion.
+geology|Why is the conveyor-belt model misleading?|wind drives plates|plates do not move|basal drag is not the main plate driver|mantle convection has no role|C|The deck clarifies that slab pull and ridge push matter more.
+geology|Which force is a major plate-driving mechanism?|photosynthesis|moonlight|slab pull|soil erosion|C|Slab pull is a major driver.
+geology|What happens in slab pull?|hot air rises|roots crack rocks|rivers carry sediment|cold dense oceanic lithosphere sinks|D|A dense slab sinks and pulls the plate.
+geology|Where does ridge push occur?|mid-ocean ridges|deserts only|river deltas|impact craters|A|Ridge push occurs near elevated spreading ridges.
+geology|Why can plate motion cause earthquakes?|plates are clouds|seismic waves create plates|rainfall is required|stress builds and is released|D|Stored elastic energy is released during fault slip.
+geology|Which stress pulls rocks apart?|compression|shearing|tension|lithification|C|Tension stretches rocks.
+geology|Which stress squeezes rocks together?|tension|compression|deposition|shearing|B|Compression pushes rocks together.
+geology|Which stress slides rocks past each other?|shearing|compression|cementation|tension|A|Shearing causes lateral motion.
+geology|Tension corresponds to which boundary?|transform|divergent|hotspot only|convergent|B|Divergent boundaries are associated with tension.
+geology|Compression corresponds to which boundary?|transform|passive margin only|divergent|convergent|D|Convergent boundaries are associated with compression.
+geology|Shearing corresponds to which boundary?|divergent|subduction only|transform|convergent|C|Transform boundaries are associated with shearing.
+geology|Tension commonly forms what fault?|strike-slip fault|thrust fault only|reverse fault|normal fault|D|Normal faults form under tension.
+geology|Compression commonly forms what fault?|reverse fault|strike-slip fault|rift fault|normal fault|A|Reverse faults form under compression.
+geology|Shearing commonly forms what fault?|reverse fault|normal fault|strike-slip fault|caldera fault|C|Strike-slip faults form under shearing.
+geology|What happens at a divergent boundary?|plates move away from each other|plates stop moving|plates collide|plates slide past|A|Divergent plates separate.
+geology|What happens at a convergent boundary?|plates slide past|plates float above air|plates separate|plates move toward each other|D|Convergent plates collide.
+geology|What happens at a transform boundary?|plates only form new crust|plates melt fully|plates slide past one another|plates collide directly|C|Transform plates move sideways past each other.
+geology|Which landform is linked to continental divergence?|rift valley|fold mountain only|meteor crater|sand dune only|A|Continental divergence creates rift valleys.
+geology|Which feature forms at oceanic divergent boundaries?|river meander|mid-ocean ridge|glacial valley|fold mountain|B|Seafloor spreading creates mid-ocean ridges.
+geology|Which process creates new oceanic crust?|chemical weathering|seafloor spreading|river deposition only|soil formation|B|New crust forms at spreading centers.
+geology|Which boundary commonly produces trenches?|divergent boundary|continental rift only|transform boundary|convergent boundary with subduction|D|Subduction produces trenches.
+geology|Which plate usually subducts in oceanic-continental convergence?|both float upward|oceanic plate|continental plate|neither plate|B|Denser oceanic lithosphere sinks.
+geology|Why does oceanic crust commonly subduct?|it is less dense|it is always youngest|it is pure ice|it is denser than continental crust|D|Oceanic crust is usually denser.
+geology|Continental-continental collision commonly forms what?|mountain ranges|lava plateaus only|mid-ocean ridges|deep trenches only|A|Continental collision builds mountains.
+geology|The Himalayas are associated with what?|oceanic spreading|continental-continental convergence|meteor impact|transform motion only|B|They formed from continental collision.
+geology|The Andes are associated mainly with what?|oceanic-continental convergence|mid-ocean spreading|continental rifting only|transform only|A|They are linked to subduction of oceanic crust beneath South America.
+geology|Oceanic-oceanic convergence commonly forms what?|continental shields|island arcs and trenches|rift valleys only|flat deserts|B|Ocean-ocean subduction forms island arcs and trenches.
+geology|The Mariana Trench formed mainly by what?|soil compaction|glacial deposition|subduction|river erosion|C|The trench is a subduction-zone feature.
+geology|The San Andreas Fault is a classic example of what?|transform boundary|divergent boundary|hotspot only|convergent boundary|A|It is a transform fault system.
+geology|A normal fault is associated with what stress?|tension|crystallization|compression|shearing|A|Normal faults form from tension.
+geology|A reverse fault is associated with what stress?|tension|shearing|erosion|compression|D|Reverse faults form from compression.
+geology|A strike-slip fault is associated with what stress?|deposition|compression|tension|shearing|D|Strike-slip faults form from shearing.
+geology|Folds form when rock layers are what?|scratched by minerals|melted only|bent under stress|dissolved only|C|Stress can bend rock layers into folds.
+geology|An anticline generally arches how?|sideways only|downward|into a crater|upward|D|Anticlines arch upward.
+geology|A syncline generally bends how?|into a volcano|downward|into a mineral crystal|upward|B|Synclines bend downward.
+geology|Folding is most commonly associated with what stress?|tension only|compression|shearing only|cooling only|B|Compression folds rock layers.
+geology|Which pair is correctly matched?|tension — convergent|compression — normal fault|compression — divergent|shearing — transform boundary|D|Shearing corresponds to transform motion.
+geology|Where does new crust commonly come from?|cloud condensation|animal respiration|photosynthesis|volcanism and solidification of magma or lava|D|New rock forms when molten material solidifies.
+geology|Magma is molten rock located where?|beneath Earth's surface|only in rivers|only in soil|above the atmosphere|A|Magma is below the surface.
+geology|Lava is molten rock that has what?|reached Earth's surface|become mineral streak|frozen underground water|remained only in mantle|A|Lava is magma at the surface.
+geology|Volcanoes commonly form where?|only deserts|plate boundaries and hotspots|only continent centers|only non-tectonic areas|B|Volcanoes commonly occur at boundaries and hotspots.
+geology|Which boundary forms volcanoes through subduction?|transform only|passive boundary|convergent boundary|non-moving boundary|C|Subduction produces magma at convergent boundaries.
+geology|Which boundary can produce magma by decompression melting?|transform only|continental collision only|river basin|divergent boundary|D|Rising mantle melts as pressure drops.
+geology|Which volcano has broad gentle slopes?|composite volcano|caldera only|shield volcano|cinder cone|C|Shield volcanoes have broad gentle slopes.
+geology|Which volcano is steep and layered with lava and pyroclastics?|shield volcano|composite volcano|lava dome only|fissure only|B|Composite volcanoes are layered and steep.
+geology|Which volcano is built from loose pyroclastic fragments around a vent?|shield volcano|fold mountain|cinder cone volcano|batholith|C|Cinder cones are built from pyroclastic fragments.
+geology|Which structure forms after collapse of a magma chamber roof?|streak plate|caldera|syncline|fault scarp|B|A caldera forms by collapse after major magma withdrawal.
+geology|Mt. Pinatubo's lake occupies what kind of volcanic depression?|caldera|cleavage plane|mid-ocean ridge|transform fault|A|Pinatubo's lake occupies a post-eruption depression.
+geology|Which eruption is usually gentle and fluid?|Plinian|Hawaiian|Vulcanian|Pelean|B|Hawaiian eruptions are generally effusive.
+geology|Which eruption has a tall explosive column?|fissure|passive|Hawaiian|Plinian|D|Plinian eruptions are highly explosive.
+geology|A fissure eruption comes from what?|streak plate|fossil bed|long crack or fissure|river mouth|C|Fissure eruptions occur along cracks.
+geology|Which eruption has lava fountains and moderate bursts?|index fossilization|lithification|soil creep|Strombolian|D|Strombolian eruptions produce bursts and fountains.
+geology|Explosive eruptions release what?|only liquid water|soil organisms only|ash and pyroclastic fragments|only quartz crystals|C|Explosive eruptions produce ash and pyroclastic material.
+geology|A rock is what?|cloud of ash only|liquid metal|single atom|solid aggregate of minerals|D|A rock is made of one or more minerals.
+geology|A mineral generally has what?|no geologic origin|definite composition and crystalline structure|only organic matter|no internal structure|B|Minerals are crystalline and chemically defined.
+geology|Which is NOT a main rock type?|metamorphic|igneous|atmospheric|sedimentary|C|The main rock types are igneous, sedimentary, and metamorphic.
+geology|Igneous rocks form by what?|cooling and solidification of magma or lava|folding only|animal fossilization only|plant compaction only|A|Igneous rocks form from molten rock.
+geology|Sedimentary rocks commonly form by what?|magma cooling only|earthquake waves only|nuclear fusion|compaction and cementation of sediments|D|Sediments lithify into sedimentary rock.
+geology|Metamorphic rocks form when rocks change due to what?|heat and pressure|sunlight only|wind only|complete melting|A|Metamorphism uses heat and pressure without full melting.
+geology|Magma cooling slowly underground forms what?|extrusive igneous rock|intrusive igneous rock|organic soil|sedimentary only|B|Intrusive rocks cool slowly below ground.
+geology|Lava cooling quickly at the surface forms what?|extrusive igneous rock|intrusive igneous rock|chemical sediment only|metamorphic only|A|Extrusive rocks cool at or near the surface.
+geology|Slow cooling usually produces what?|fossils only|soil particles only|no crystals ever|large crystals|D|Slow cooling allows crystal growth.
+geology|Fast cooling usually produces what?|giant crystals only|soil horizons only|small crystals or glassy texture|fossil layers only|C|Fast cooling limits crystal growth.
+geology|Granite is commonly what?|felsic intrusive igneous rock|chemical sedimentary rock|mafic extrusive igneous rock|foliated metamorphic rock|A|Granite is felsic and intrusive.
+geology|Basalt is commonly what?|nonfoliated metamorphic rock|organic sedimentary rock|mafic extrusive igneous rock|felsic intrusive igneous rock|C|Basalt is mafic and extrusive.
+geology|Obsidian is known for what texture?|soil layers|visible fossils|glassy texture|powdered streak only|C|Obsidian is volcanic glass.
+geology|Pumice is notable because it is what?|light and vesicular|made only of clay|always metallic|a fossil|A|Pumice contains many gas bubbles.
+geology|Scoria is commonly what?|compressed shells|dark and vesicular|soil horizon|white and sugary only|B|Scoria is a dark vesicular volcanic rock.
+geology|Gabbro is similar to basalt but is what?|intrusive and coarse-grained|foliated metamorphic|extrusive and glassy|fossil-rich sedimentary|A|Gabbro cools slowly underground.
+geology|Rhyolite is commonly a felsic what?|extrusive igneous rock|organic sediment|soil type|intrusive igneous rock|A|Rhyolite is felsic and extrusive.
+geology|Pegmatite is known for what?|no crystals|fossil layers|clay texture only|very large crystals|D|Pegmatites have very large crystals.
+geology|Weathering and erosion turn rock into what?|magma immediately|gas only|inner core material|sediments|D|They break down and move rock into sediments.
+geology|Compaction and cementation turn sediment into what?|magma|lava|sedimentary rock|metallic minerals only|C|Lithification forms sedimentary rock.
+geology|Melting turns rock into what?|index fossil|magma|sediment|soil organism|B|Melting produces magma.
+geology|Cooling and crystallization turn magma into what?|soil only|water vapor|sedimentary only|igneous rock|D|Cooling magma forms igneous rock.
+geology|Heat and pressure can turn sedimentary rock into what?|fossil fuel only|loose sediment|metamorphic rock|lava without melting|C|Heat and pressure cause metamorphism.
+geology|Which statement about the rock cycle is correct?|any rock type can change into another through geologic processes|only igneous can become sedimentary|rocks never change|rocks are unaffected by weathering|A|The rock cycle connects all rock types.
+geology|Cleavage is a mineral's tendency to do what?|become soil instantly|melt into lava|split along flat parallel planes|form fossils|C|Cleavage follows weak planes.
+geology|Fracture means a mineral breaks how?|into water drops|only along flat planes|irregularly or unevenly|always into cubes|C|Fracture is irregular breakage.
+geology|Streak means what?|volcano height|powdered color of a mineral|plate direction|fossil age|B|Streak is a mineral's powder color.
+geology|Why is streak often more reliable than outward color?|streak is unrelated|impurities and weathering can alter color|color is always better|streak changes every second|B|External color can be misleading.
+geology|Hardness measures resistance to what?|folding|floating|melting only|scratching|D|Hardness is scratch resistance.
+geology|Mohs Hardness Scale runs from what?|5 to 50|1 to 10|0 to 100|10 to 1000|B|Mohs scale ranges from 1 to 10.
+geology|Which mineral is softest on Mohs scale?|feldspar|quartz|talc|diamond|C|Talc is hardness 1.
+geology|Which mineral is hardest on Mohs scale?|gypsum|diamond|calcite|talc|B|Diamond is hardness 10.
+geology|A hardness-7 mineral can scratch what?|hardness 6 mineral|hardness 8 mineral|hardness 9 mineral|hardness 10 mineral|A|Harder minerals scratch softer minerals.
+geology|Luster describes how a mineral does what?|moves plates|forms earthquakes|becomes magma|reflects light|D|Luster is light reflection.
+geology|Metallic luster means a mineral looks what?|transparent like water only|shiny like metal|soft like clay|dull like soil only|B|Metallic minerals appear metal-like.
+geology|Why is color often least reliable for identifying minerals?|minerals have no color|all minerals have same color|color cannot be seen|impurities and weathering can change appearance|D|Color can vary even in the same mineral.
+geology|Crystal habit refers to what?|earthquake intensity|soil moisture|outward geometric shape from atomic arrangement|epicenter distance|C|Habit reflects crystal growth and internal structure.
+geology|Weathering is what?|dropping of sediments|seismic wave formation|breakdown of rocks|transport of sediments|C|Weathering breaks rock down.
+geology|Erosion is what?|transport of weathered materials|breakdown only|dropping only|crystal formation only|A|Erosion moves sediment.
+geology|Deposition is what?|folding mountains|dropping or settling of sediments|measuring hardness|melting igneous rock|B|Deposition drops transported sediments.
+geology|Which sequence is correct?|melting → streak → cleavage|erosion → deposition → weathering|deposition → weathering → erosion|weathering → erosion → deposition|D|Breakdown comes before transport and dropping.
+geology|Lithification mainly involves what?|compaction and cementation|melting and evaporation|crystallization and fusion only|shearing and subduction|A|Lithification turns sediment into rock.
+geology|Strata are what?|lava types only|layers of sedimentary rock|mantle parts|earthquake waves|B|Strata are layers.
+geology|In undisturbed strata, where are older layers usually found?|randomly only|top|bottom|middle always|C|Superposition places older layers below younger layers.
+geology|A useful index fossil came from an organism that was what?|impossible to identify|widespread and short-lived|rare and long-lived|local only|B|Good index fossils are widespread and existed briefly.
+geology|Index fossils help determine what?|relative age of rock layers|mineral hardness|outer-core depth|tomorrow's weather|A|Index fossils correlate rock layers by age.
+geology|Soil is a mixture that includes organic matter, minerals, gases, water, and what?|lava only|organisms|magma only|stars|B|Soil includes living and once-living components.
+geology|Decayed plant and animal material is called what?|organic matter|P-waves|magma|basalt only|A|Organic matter comes from decomposed organisms.
+geology|Which soil has largest particles and drains quickly?|loam only|sandy soil|silty soil|clayey soil|B|Sand particles are large and drain fast.
+geology|Which soil has fine particles and holds water strongly?|sandy soil|gravel only|clayey soil|volcanic ash only|C|Clay particles are very fine and retain water.
+geology|Why is loam often good for plants?|it balances sand, silt, clay, organic matter, water, and air|it is magma only|it has no water retention|it contains only rocks|A|Loam balances drainage and water-holding capacity.
+geology|A field drains too fast and crops dry quickly; the soil is likely too what?|clayey|organic-rich|sandy|silty|C|Sandy soil drains quickly.
+geology|A widespread short-lived fossil found in many distant layers is what?|earthquake focus|mineral streak|index fossil|volcanic vent|C|That is the definition of an index fossil.
+geology|A region with earthquakes, trenches, volcanic arcs, and subduction is what setting?|stable continental interior|transform boundary only|divergent rift valley only|convergent plate boundary|D|Subduction at convergent boundaries creates trenches, arcs, and earthquakes.
+`;
+
+const topicNames = {
+  space: "Space Science",
+  geology: "Geology"
+};
+
+const questions = rawQuestions
+  .trim()
+  .split("\n")
+  .filter(line => line.trim() !== "")
+  .flatMap((line, index) => {
+    const parts = line.split("|");
+
+    if (parts.length < 8) {
+      console.warn("Bad question line:", line);
+      return [];
+    }
+
+    const answerLetter = parts[6].trim().toUpperCase();
+    const answerIndex = "ABCD".indexOf(answerLetter);
+
+    if (answerIndex === -1) {
+      console.warn("Bad answer key:", line);
+      return [];
+    }
+
+    return [{
+      id: index + 1,
+      mode: parts[0].trim(),
+      category: topicNames[parts[0].trim()] || parts[0].trim(),
+      question: parts[1].trim(),
+      choices: [
+        parts[2].trim(),
+        parts[3].trim(),
+        parts[4].trim(),
+        parts[5].trim()
+      ],
+      answerIndex,
+      explanation: parts[7].trim()
+    }];
+  });
+
+const setupScreen = document.getElementById("setupScreen");
+const gameScreen = document.getElementById("gameScreen");
+const endScreen = document.getElementById("endScreen");
+
+const selectedCount = document.getElementById("selectedCount");
+const modeButtons = [...document.querySelectorAll(".mode-btn")];
+const countButtons = [...document.querySelectorAll("#countOptions .pill-btn")];
+
+const timerButtons = [...document.querySelectorAll("#timerOptions .pill-btn")];
+const timedTypeButtons = [...document.querySelectorAll("#timedTypeOptions .pill-btn")];
+
+const timedPanel = document.getElementById("timedPanel");
+const timerMinutes = document.getElementById("timerMinutes");
+const timerSecondsInput = document.getElementById("timerSecondsInput");
+const timerNote = document.getElementById("timerNote");
+
+const startBtn = document.getElementById("startBtn");
+const quitBtn = document.getElementById("quitBtn");
+const restartBtn = document.getElementById("restartBtn");
+const setupBtn = document.getElementById("setupBtn");
+const nextBtn = document.getElementById("nextBtn");
+
+const hudTopic = document.getElementById("hudTopic");
+const hudProgress = document.getElementById("hudProgress");
+const hudScore = document.getElementById("hudScore");
+const hudTimer = document.getElementById("hudTimer");
+
+const questionCategory = document.getElementById("questionCategory");
+const chanceText = document.getElementById("chanceText");
+const questionText = document.getElementById("questionText");
+const choicesGrid = document.getElementById("choicesGrid");
+
+const feedbackBox = document.getElementById("feedbackBox");
+const feedbackTitle = document.getElementById("feedbackTitle");
+const feedbackText = document.getElementById("feedbackText");
+
+const finalScore = document.getElementById("finalScore");
+const finalAccuracy = document.getElementById("finalAccuracy");
+const finalStreak = document.getElementById("finalStreak");
+const endTitle = document.getElementById("endTitle");
+const endLine = document.getElementById("endLine");
+
+let state = {
+  selectedModes: new Set(Object.keys(topicNames)),
+  count: 10,
+
+  timerMode: "untimed",
+  timedType: "general",
+  timerSeconds: 0,
+
+  pool: [],
+  queue: [],
+  current: null,
+  currentChoices: [],
+  questionNumber: 0,
+  score: 0,
+
+  wrong: 0,
+  maxWrong: 2,
+
+  streak: 0,
+  bestStreak: 0,
+  locked: false,
+
+  timerLeft: 0,
+  timerId: null,
+  unlimited: false,
+  endedByErrors: false,
+  endedByGeneralTimer: false
+};
+
+function shuffle(array) {
+  const copy = [...array];
+
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+
+  return copy;
+}
+
+function updateSelectedCount() {
+  selectedCount.textContent = `${state.selectedModes.size} selected`;
+}
+
+function setActiveButton(buttons, clicked) {
+  buttons.forEach(btn => btn.classList.remove("active"));
+  clicked.classList.add("active");
+}
+
+function formatTime(totalSeconds) {
+  const safeSeconds = Math.max(0, totalSeconds);
+  const mins = Math.floor(safeSeconds / 60);
+  const secs = safeSeconds % 60;
+  return `${mins}:${String(secs).padStart(2, "0")}`;
+}
+
+function updateCustomTimer() {
+  let mins = Number(timerMinutes.value);
+  let secs = Number(timerSecondsInput.value);
+
+  if (Number.isNaN(mins) || mins < 0) mins = 0;
+  if (Number.isNaN(secs) || secs < 0) secs = 0;
+
+  if (mins > 180) mins = 180;
+  if (secs > 59) secs = 59;
+
+  timerMinutes.value = mins;
+  timerSecondsInput.value = secs;
+
+  state.timerSeconds = mins * 60 + secs;
+
+  if (state.timerMode !== "timed") {
+    timerNote.textContent = "No time limit.";
+    return;
+  }
+
+  if (state.timerSeconds <= 0) {
+    timerNote.textContent = "Set at least 1 second for timed mode.";
+    return;
+  }
+
+  if (state.timedType === "general") {
+    timerNote.textContent = `General timer: ${formatTime(state.timerSeconds)} for the whole quiz.`;
+  } else {
+    timerNote.textContent = `Per-question timer: ${formatTime(state.timerSeconds)} each question.`;
+  }
+}
+
+function getCorrectChoiceText() {
+  const correctChoice = state.currentChoices.find(c => c.isCorrect);
+  return correctChoice ? correctChoice.text : "Answer unavailable";
+}
+
+function revealCorrectChoice() {
+  const buttons = [...document.querySelectorAll(".choice-btn")];
+
+  buttons.forEach((btn, index) => {
+    btn.disabled = true;
+
+    if (state.currentChoices[index]?.isCorrect) {
+      btn.classList.add("correct");
+    }
+  });
+}
+
+function triggerErrorGameOver(messagePrefix = "Correct answer") {
+  state.locked = true;
+  state.endedByErrors = true;
+  state.streak = 0;
+
+  clearTimer();
+  revealCorrectChoice();
+
+  showFeedback(
+    "Game Over — 2 errors reached",
+    `${messagePrefix}: ${getCorrectChoiceText()}. ${state.current.explanation}`,
+    "bad"
+  );
+
+  nextBtn.classList.add("hidden");
+
+  setTimeout(() => {
+    endGame();
+  }, 2200);
+}
+
+modeButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const mode = btn.dataset.mode;
+
+    if (state.selectedModes.has(mode)) {
+      if (state.selectedModes.size === 1) return;
+
+      state.selectedModes.delete(mode);
+      btn.classList.remove("active");
+    } else {
+      state.selectedModes.add(mode);
+      btn.classList.add("active");
+    }
+
+    updateSelectedCount();
+  });
+});
+
+countButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    setActiveButton(countButtons, btn);
+    state.count = btn.dataset.count === "unli" ? "unli" : Number(btn.dataset.count);
+  });
+});
+
+timerButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    setActiveButton(timerButtons, btn);
+
+    state.timerMode = btn.dataset.timerMode;
+
+    if (state.timerMode === "timed") {
+      timedPanel.classList.remove("hidden");
+      updateCustomTimer();
+    } else {
+      timedPanel.classList.add("hidden");
+      state.timerSeconds = 0;
+      state.timerLeft = 0;
+      timerNote.textContent = "No time limit.";
+    }
+  });
+});
+
+timedTypeButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    setActiveButton(timedTypeButtons, btn);
+    state.timedType = btn.dataset.timedType;
+    updateCustomTimer();
+  });
+});
+
+[timerMinutes, timerSecondsInput].forEach(input => {
+  input.addEventListener("input", updateCustomTimer);
+});
+
+startBtn.addEventListener("click", startGame);
+restartBtn.addEventListener("click", startGame);
+setupBtn.addEventListener("click", showSetup);
+quitBtn.addEventListener("click", endGame);
+nextBtn.addEventListener("click", nextQuestion);
+
+updateSelectedCount();
+updateCustomTimer();
+
+function showSetup() {
+  clearTimer();
+
+  setupScreen.classList.remove("hidden");
+  gameScreen.classList.add("hidden");
+  endScreen.classList.add("hidden");
+}
+
+function startGame() {
+  const selected = [...state.selectedModes];
+
+  if (state.timerMode === "timed") {
+    updateCustomTimer();
+
+    if (state.timerSeconds <= 0) {
+      alert("Set at least 1 second for timed mode.");
+      return;
+    }
+  }
+
+  state.pool = questions.filter(q => selected.includes(q.mode));
+
+  if (!state.pool.length) {
+    alert("Pumili muna ng kahit isang mission.");
+    return;
+  }
+
+  state.unlimited = state.count === "unli";
+  state.queue = shuffle(state.pool);
+
+  state.questionNumber = 0;
+  state.score = 0;
+  state.wrong = 0;
+  state.streak = 0;
+  state.bestStreak = 0;
+  state.locked = false;
+  state.endedByErrors = false;
+  state.endedByGeneralTimer = false;
+
+  state.timerLeft = state.timerMode === "timed" ? state.timerSeconds : 0;
+
+  setupScreen.classList.add("hidden");
+  endScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
+
+  const topicLabel = selected.length === 1
+    ? topicNames[selected[0]]
+    : "Earth & Space Mixed Drill";
+
+  hudTopic.textContent = topicLabel;
+
+  nextQuestion();
+}
+
+function nextQuestion() {
+  clearTimer();
+
+  feedbackBox.classList.add("hidden");
+  feedbackBox.classList.remove("bad", "warn");
+  nextBtn.classList.remove("hidden");
+
+  if (state.endedByErrors || state.endedByGeneralTimer) {
+    endGame();
+    return;
+  }
+
+  if (!state.unlimited && state.questionNumber >= state.count) {
+    endGame();
+    return;
+  }
+
+  if (
+    state.timerMode === "timed" &&
+    state.timedType === "general" &&
+    state.timerLeft <= 0
+  ) {
+    endGame();
+    return;
+  }
+
+  if (state.queue.length === 0) {
+    state.queue = shuffle(state.pool);
+  }
+
+  state.current = state.queue.pop();
+  state.questionNumber++;
+  state.locked = false;
+
+  const originalChoices = state.current.choices.map((text, index) => ({
+    text,
+    isCorrect: index === state.current.answerIndex
+  }));
+
+  state.currentChoices = shuffle(originalChoices);
+
+  renderQuestion();
+  startTimer();
+}
+
+function renderQuestion() {
+  const totalText = state.unlimited ? "∞" : state.count;
+
+  hudProgress.textContent = `${state.questionNumber} / ${totalText}`;
+  hudScore.textContent = state.score;
+
+  if (state.timerMode !== "timed") {
+    hudTimer.textContent = "∞";
+  } else if (state.timedType === "general") {
+    hudTimer.textContent = formatTime(state.timerLeft);
+  } else {
+    hudTimer.textContent = formatTime(state.timerSeconds);
+  }
+
+  questionCategory.textContent = state.current.category;
+
+  if (state.wrong === 0) {
+    chanceText.textContent = "First attempt";
+    chanceText.classList.remove("warning");
+  } else {
+    chanceText.textContent = `Warning ${state.wrong}/${state.maxWrong - 1}`;
+    chanceText.classList.add("warning");
+  }
+
+  questionText.textContent = state.current.question;
+  choicesGrid.innerHTML = "";
+
+  state.currentChoices.forEach((choice, index) => {
+    const btn = document.createElement("button");
+    btn.className = "choice-btn";
+    btn.type = "button";
+    btn.innerHTML = `<b>${"ABCD"[index]}.</b> ${choice.text}`;
+    btn.addEventListener("click", () => chooseAnswer(index));
+    choicesGrid.appendChild(btn);
+  });
+}
+
+function chooseAnswer(choiceIndex) {
+  if (state.locked) return;
+
+  const choice = state.currentChoices[choiceIndex];
+  const buttons = [...document.querySelectorAll(".choice-btn")];
+
+  if (choice.isCorrect) {
+    state.locked = true;
+    state.score++;
+    state.streak++;
+    state.bestStreak = Math.max(state.bestStreak, state.streak);
+
+    buttons[choiceIndex].classList.add("correct");
+    buttons.forEach(btn => btn.disabled = true);
+
+    showFeedback(
+      "Correct!",
+      `Tama. ${state.current.explanation}`,
+      "good"
+    );
+
+    hudScore.textContent = state.score;
+
+    if (state.timerMode === "timed" && state.timedType === "perQuestion") {
+      clearTimer();
+    }
+
+    return;
+  }
+
+  buttons[choiceIndex].classList.add("wrong");
+  buttons[choiceIndex].disabled = true;
+
+  state.wrong++;
+  state.streak = 0;
+
+  if (state.wrong >= state.maxWrong) {
+    triggerErrorGameOver("Correct answer");
+    return;
+  }
+
+  chanceText.textContent = "Huling pagkakataon";
+  chanceText.classList.add("warning");
+
+  showFeedback(
+    "Huling Pagkakataon",
+    "Mali ang sagot. One more mistake and the mission ends.",
+    "warn",
+    false
+  );
+}
+
+function showFeedback(title, text, type, showNext = true) {
+  feedbackTitle.textContent = title;
+  feedbackText.textContent = text;
+
+  feedbackBox.classList.remove("hidden", "bad", "warn");
+
+  if (type === "bad") feedbackBox.classList.add("bad");
+  if (type === "warn") feedbackBox.classList.add("warn");
+
+  nextBtn.classList.toggle("hidden", !showNext);
+}
+
+function startTimer() {
+  clearTimer();
+
+  if (state.timerMode !== "timed" || !state.timerSeconds) {
+    hudTimer.textContent = "∞";
+    return;
+  }
+
+  if (state.timedType === "perQuestion") {
+    state.timerLeft = state.timerSeconds;
+  }
+
+  hudTimer.textContent = formatTime(state.timerLeft);
+
+  state.timerId = setInterval(() => {
+    state.timerLeft--;
+    hudTimer.textContent = formatTime(state.timerLeft);
+
+    if (state.timerLeft <= 0) {
+      if (state.timedType === "general") {
+        generalTimeUp();
+      } else {
+        timeUp();
+      }
+    }
+  }, 1000);
+}
+
+function timeUp() {
+  clearTimer();
+
+  if (state.locked) return;
+
+  state.wrong++;
+  state.streak = 0;
+  state.locked = true;
+
+  revealCorrectChoice();
+
+  if (state.wrong >= state.maxWrong) {
+    triggerErrorGameOver("Time's up. Correct answer");
+    return;
+  }
+
+  showFeedback(
+    "Time’s up — warning counted",
+    `Correct answer: ${getCorrectChoiceText()}. ${state.current.explanation} One more mistake and the mission ends.`,
+    "bad"
+  );
+}
+
+function generalTimeUp() {
+  clearTimer();
+
+  if (state.locked) return;
+
+  state.locked = true;
+  state.endedByGeneralTimer = true;
+
+  const buttons = [...document.querySelectorAll(".choice-btn")];
+
+  buttons.forEach(btn => {
+    btn.disabled = true;
+  });
+
+  showFeedback(
+    "General time’s up!",
+    "The mission timer has ended. Your final score will now be shown.",
+    "bad"
+  );
+
+  nextBtn.classList.add("hidden");
+
+  setTimeout(() => {
+    endGame();
+  }, 1600);
+}
+
+function clearTimer() {
+  if (state.timerId) {
+    clearInterval(state.timerId);
+    state.timerId = null;
+  }
+}
+
+function endGame() {
+  clearTimer();
+
+  const attempted = state.questionNumber;
+  const accuracy = attempted ? Math.round((state.score / attempted) * 100) : 0;
+
+  gameScreen.classList.add("hidden");
+  setupScreen.classList.add("hidden");
+  endScreen.classList.remove("hidden");
+
+  finalScore.textContent = `${state.score} / ${attempted}`;
+  finalAccuracy.textContent = `${accuracy}%`;
+  finalStreak.textContent = state.bestStreak;
+
+  if (state.endedByErrors || state.wrong >= state.maxWrong) {
+    endTitle.textContent = "Game Over";
+    endLine.textContent = "Two mistakes reached. Review the revealed answer, then relaunch the mission.";
+  } else if (state.endedByGeneralTimer) {
+    endTitle.textContent = "Time’s Up";
+    endLine.textContent = "The general mission timer ended. Review your weak topics, then relaunch the mission.";
+  } else if (accuracy >= 90) {
+    endTitle.textContent = "Earth & Space Master";
+    endLine.textContent = "Solid. You survived both cosmic scale and Earth-scale questions.";
+  } else if (accuracy >= 75) {
+    endTitle.textContent = "Orbit Secured";
+    endLine.textContent = "Strong performance. Konting review pa sa confusing terms and processes.";
+  } else if (accuracy >= 50) {
+    endTitle.textContent = "Stable, Needs Boost";
+    endLine.textContent = "May laban. Review the basics, then return for another mission.";
+  } else {
+    endTitle.textContent = "Mission Needs Relaunch";
+    endLine.textContent = "Balik muna sa fundamentals: Earth layers, seismic waves, Big Bang evidence, rocks, minerals, and plate boundaries.";
+  }
+}
+  </script>
+</body>
+</html>
